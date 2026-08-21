@@ -40,6 +40,8 @@ tags:
     description: Collection of media to watch later
   - name: blocklist
     description: Blocklisted media from discovery page.
+  - name: stats
+    description: Endpoints related to request statistics.
 servers:
   - url: '{server}/api/v1'
     variables:
@@ -8225,6 +8227,164 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OverrideRule'
+  /stats:
+    get:
+      summary: Get request statistics
+      description: |
+        Returns per-user request statistics: totals, an ISO-week breakdown per
+        user, and the data volume on disk attributable to each user's requests.
+
+        Sizes are resolved on demand from Radarr and Sonarr and cached in memory.
+        Requests whose files have not been grabbed yet count as zero bytes and
+        are reported separately as `pending`. Requires the Admin permission.
+      tags:
+        - stats
+      parameters:
+        - in: query
+          name: refresh
+          required: false
+          description: Set to 1 to bypass the cached Radarr/Sonarr size index.
+          schema:
+            type: string
+            enum: ['0', '1']
+      responses:
+        '200':
+          description: Request statistics returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  generatedAt:
+                    type: string
+                    example: '2026-08-20T00:00:00.000Z'
+                  sizesAvailable:
+                    type: boolean
+                    example: true
+                  warnings:
+                    type: array
+                    items:
+                      type: string
+                  weeks:
+                    type: array
+                    items:
+                      type: string
+                      example: '2026-W23'
+                  weekStarts:
+                    type: object
+                    additionalProperties:
+                      type: string
+                      example: '2026-06-01'
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        displayName:
+                          type: string
+                        avatar:
+                          type: string
+                        slot:
+                          type: number
+                        requests:
+                          type: number
+                        movies:
+                          type: number
+                        tv:
+                          type: number
+                        seasons:
+                          type: number
+                        bytes:
+                          type: number
+                        pending:
+                          type: number
+                        unmatched:
+                          type: number
+                        activeWeeks:
+                          type: number
+                        avgPerWeek:
+                          type: number
+                        avgPerActiveWeek:
+                          type: number
+                        peakWeek:
+                          type: string
+                          nullable: true
+                        peakCount:
+                          type: number
+                        first:
+                          type: string
+                          nullable: true
+                        last:
+                          type: string
+                          nullable: true
+                        weeks:
+                          type: object
+                          additionalProperties:
+                            type: number
+                  requests:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        type:
+                          type: string
+                          example: movie
+                        title:
+                          type: string
+                        status:
+                          type: string
+                          example: completed
+                        user:
+                          type: string
+                        userId:
+                          type: number
+                        createdAt:
+                          type: string
+                        week:
+                          type: string
+                        bytes:
+                          type: number
+                        matched:
+                          type: boolean
+                        seasons:
+                          type: array
+                          items:
+                            type: number
+                        is4k:
+                          type: boolean
+                  totals:
+                    type: object
+                    properties:
+                      requests:
+                        type: number
+                      bytes:
+                        type: number
+                      requesters:
+                        type: number
+                      accounts:
+                        type: number
+                      movies:
+                        type: number
+                      tv:
+                        type: number
+                      seasons:
+                        type: number
+                      pending:
+                        type: number
+                      unmatched:
+                        type: number
+                      spanWeeks:
+                        type: number
+                      start:
+                        type: string
+                        nullable: true
+                      end:
+                        type: string
+                        nullable: true
 security:
   - cookieAuth: []
   - apiKey: []
