@@ -29,6 +29,8 @@ export interface RadarrMovie {
   qualityProfileId: number;
   added: string;
   hasFile: boolean;
+  year?: number;
+  sizeOnDisk?: number;
   tags: number[];
   movieFile?: {
     id: number;

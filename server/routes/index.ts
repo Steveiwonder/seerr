@@ -40,6 +40,7 @@ import personRoutes from './person';
 import requestRoutes from './request';
 import searchRoutes from './search';
 import serviceRoutes from './service';
+import statsRoutes from './stats';
 import tvRoutes from './tv';
 import user from './user';
 
@@ -154,6 +155,7 @@ router.get(
   }
 );
 router.use('/settings', isAuthenticated(Permission.ADMIN), settingsRoutes);
+router.use('/stats', isAuthenticated(Permission.ADMIN), statsRoutes);
 router.use('/search', isAuthenticated(), searchRoutes);
 router.use('/discover', isAuthenticated(), discoverRoutes);
 router.use('/request', isAuthenticated(), requestRoutes);
